@@ -87,13 +87,7 @@ function App() {
 
   function onDragEnd(result) {
     const { destination, source, draggableId} = result;
-
     if (!destination) return;
-
-    if (
-      destination.droppableId === source.droppableId ||
-      destination.droppableId === 'searched'
-    ) return;
 
     // Tweet being deleted
     if(
@@ -106,11 +100,16 @@ function App() {
       return;
     }
 
-    // Saving a tweet
-    let tweetToSave = [...tweets].splice(source.index, 1);
-    let newSaved = [...savedTweets];
-    newSaved.splice(destination.index, 0, tweetToSave[0]);
-    setSavedTweets(newSaved);
+    // Tweet being saved
+    if(
+      source.droppableId === 'searched' &&
+      destination.droppableId === 'saved'
+    ) {
+      let tweetToSave = [...tweets].splice(source.index, 1);
+      let newSaved = [...savedTweets];
+      newSaved.splice(destination.index, 0, tweetToSave[0]);
+      setSavedTweets(newSaved);
+    }
   }
 
   return (

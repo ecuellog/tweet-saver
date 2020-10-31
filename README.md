@@ -1,7 +1,6 @@
 # Tweet Saver
 A web app to save searched tweets into localStorage
 
-
 ## To Run in Development:
 
 ### `npm install`

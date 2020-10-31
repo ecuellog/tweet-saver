@@ -10,6 +10,7 @@ import TweetList from './components/TweetList';
 import { makeStyles } from '@material-ui/core/styles';
 import keyBy from 'lodash/keyBy';
 import Tweet from './components/Tweet';
+import DeleteTweet from './components/DeleteTweet';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { Card, Container, Divider } from '@material-ui/core';
 
@@ -36,6 +37,11 @@ const useStyles = makeStyles({
   },
   tweetList: {
     flexGrow: 1
+  },
+  middleGridContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
   }
 });
 
@@ -89,6 +95,17 @@ function App() {
       destination.droppableId === 'searched'
     ) return;
 
+    // Tweet being deleted
+    if(
+      destination.droppableId === 'delete' &&
+      source.droppableId === 'saved'
+    ) {
+      let newSaved = [...savedTweets];
+      newSaved.splice(source.index, 1);
+      setSavedTweets(newSaved);
+      return;
+    }
+
     // Saving a tweet
     let tweetToSave = [...tweets].splice(source.index, 1);
     let newSaved = [...savedTweets];
@@ -105,7 +122,7 @@ function App() {
           onDragEnd={onDragEnd}
         >
           <Grid container spacing={3} className={classes.tweetSaverContainer}>
-            <Grid item xs={6} className={classes.tweetListContainer}>
+            <Grid item xs={5} className={classes.tweetListContainer}>
               <form onSubmit={(e) => onSubmitSearch(e)}>
                 <Card className={classes.searchContainer} variant="outlined">
                   <InputBase
@@ -132,7 +149,22 @@ function App() {
                 )}
               </Droppable>
             </Grid>
-            <Grid item xs={6} className={classes.tweetListContainer}>
+            <Grid xs={2} className={classes.middleGridContainer}>
+              <Droppable droppableId="delete">
+                {(provided) => (
+                  <DeleteTweet
+                    innerRef={provided.innerRef}
+                    {...provided.droppableProps}
+                    placeholder={provided.placeholder}
+                  ></DeleteTweet>
+                )}
+              </Droppable>
+              <div>
+                <h4>Drag tweets to save</h4>
+                --&gt;
+              </div>
+            </Grid>
+            <Grid item xs={5} className={classes.tweetListContainer}>
               <h5>Saved Tweets</h5>
               <Droppable droppableId="saved">
                 {(provided) => (
